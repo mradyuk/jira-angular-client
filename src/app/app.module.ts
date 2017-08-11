@@ -3,9 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule }   from '@angular/forms'; // <-- NgModel lives here
 import { HttpModule }    from '@angular/http';
 
-import { AppComponent }  from './app.component';
+import { AppComponent }  from './components/app.component';
 
-import {JiraService} from './jira.service';
+import {JiraService} from './services/jira.service';
 
 @NgModule({
   imports: [
