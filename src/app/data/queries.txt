@@ -1,0 +1,2 @@
+project = JUZT AND issuetype = Defect AND status = "In Progress"
+project = JUZT AND issuetype = Defect AND status = "In Progress" AND priority = High

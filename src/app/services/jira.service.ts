@@ -16,6 +16,11 @@ export class JiraService {
 
   getSampleProjects(){ return PROJECTS; }
 
+  getSampleIssue(project: string){
+
+    let url  = this.jiraUrl + '/rest/api/2/search?jql=project=' + project;
+  }
+
   getProjects(): Promise<Project> {
     let header = new Headers({ 'Content-Type': 'application/json' });
 
