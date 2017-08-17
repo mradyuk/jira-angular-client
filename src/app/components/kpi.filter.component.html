@@ -1,0 +1,25 @@
+<div>
+    <div>
+        <label>Project</label>
+        <select id="project" name="project" [(ngModel)]="project" (ngModelChange)="onProjectChange()">
+      <option *ngFor="let prj of projects" [ngValue]="prj.key">{{prj.name}}</option>
+ </select>
+    </div>
+    <div>
+        <label>Fix version(s)</label>
+        <select id="fixVersion" name="fixVersion" [(ngModel)]="fixVersion">
+        <option selected value="">All</option>
+        <option selected value="EMPTY">No Version</option>
+        <option *ngFor="let version of fixVersions" [ngValue]="version.name">{{version.name}}</option>
+    </select>
+        <label>Component(s)</label>
+        <select id="component" name="component" [(ngModel)]="component">
+        <option selected value="">All</option>
+        <option selected value="EMPTY">No Component</option>
+         <option *ngFor="let component of components" [ngValue]="component.name">{{component.name}}</option>
+    </select>
+        <button (click)="loadReport()" type="button">Generate Report</button>
+    </div>
+</div>
+
+<router-outlet></router-outlet>

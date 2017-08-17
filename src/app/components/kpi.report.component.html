@@ -1,0 +1,85 @@
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>KPI</th>
+      <th>Criteria</th>
+      <th>Actual value</th>
+      <th>Quality check</th>
+      <th>Additional Information</th>
+      <th>Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="header-td">1</td>
+      <td class="header-td">Total # of Showstopper Issues</td>
+      <td class="header-td">not defined</td>
+      <td>{{totalShowStopperQuery.total}}</td>
+      <td>N/A</td>
+      <td> <a *ngFor="let issue of totalShowstopperIssues" href='http://jiraps-test-upgrade:8080/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="header-td">2</td>
+      <td class="header-td">Total # of Requirements (Stories)</td>
+      <td class="header-td">Stories resolved/done</td>
+      <td>{{totalStoryQuery.total}}</td>
+      <td *ngIf="totalStoryIssues.length > 0">Fail</td>
+      <td *ngIf="totalStoryIssues.length == 0">Pass</td>
+      <td>Stories in progress:<a *ngFor="let issue of totalStoryIssues" href='http://jiraps-test-upgrade:8080/browse/{{issue.key}}'
+          target='_blank'> {{issue.key}};</a></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="header-td">3</td>
+      <td class="header-td"># Defects in Progress - Showstoppers</td>
+      <td class="header-td">0</td>
+      <td>{{showStopperQuery.total}}</td>
+      <td *ngIf="showStopperIssues.length > 0"> Fail</td>
+      <td *ngIf="showStopperIssues.length == 0"> Pass</td>
+      <td><a *ngFor="let issue of showStopperIssues" href='http://jiraps-test-upgrade:8080/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="header-td">4</td>
+      <td class="header-td"># Defects in Progress - High Level</td>
+      <td class="header-td">0</td>
+      <td>{{highLevelQuery.total}}</td>
+      <td *ngIf="highLevelIssues.length > 0"> Fail</td>
+      <td *ngIf="highLevelIssues.length == 0"> Pass</td>
+      <td><a *ngFor="let issue of highLevelIssues" href='http://jiraps-test-upgrade:8080/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="header-td">5</td>
+      <td class="header-td"># Defects in Progress - Medium</td>
+      <td class="header-td">1</td>
+      <td>{{mediumLevelQuery.total}}</td>
+      <td *ngIf="mediumLevelIssues.length > 1"> Fail</td>
+      <td *ngIf="mediumLevelIssues.length <= 1"> Pass</td>
+      <td><a *ngFor="let issue of mediumLevelIssues" href='http://jiraps-test-upgrade:8080/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="header-td">6</td>
+      <td class="header-td"># Defects in Progress - Low Level</td>
+      <td class="header-td">2</td>
+      <td>{{lowLevelQuery.total}}</td>
+      <td *ngIf="lowLevelIssues.length > 2"> Fail</td>
+      <td *ngIf="lowLevelIssues.length <= 2"> Pass</td>
+      <td><a *ngFor="let issue of lowLevelIssues" href='http://jiraps-test-upgrade:8080/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="header-td">6</td>
+      <td class="header-td"># Defects reported in BIOVIA environment(s)</td>
+      <td class="header-td">not defined</td>
+      <td>{{defectsInBioviaEnvQuery.total}}</td>
+      <td>N/A</td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

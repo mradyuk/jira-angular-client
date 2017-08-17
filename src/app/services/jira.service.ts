@@ -1,32 +1,102 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, RequestOptions } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
-import { Project } from '../classes/kpi.project';
+import { Project } from '../classes/jira.project';
+import { Issue } from '../classes/jira.issue';
 
-import { PROJECTS } from '../data/projects';
+//import { PROJECTS } from '../data/projects';
+//import { QUERY } from '../data/issues';
 
 @Injectable()
 export class JiraService {
-  private jiraUrl = 'http://mradziuk.atlassian.net';
- // private jiraUrl = 'http://jiraps-test-upgrade:8080';  // URL to web api
 
-  constructor(private http: Http) { }
+  private options = new RequestOptions();
 
-  getSampleProjects(){ return PROJECTS; }
+  private jiraUrl = 'http://jiraps-test-upgrade:8080';  // URL to web api
 
-  getSampleIssue(project: string){
+  constructor(private http: Http) {
 
-    let url  = this.jiraUrl + '/rest/api/2/search?jql=project=' + project;
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+
+    this.options.headers = headers;
+    this.options.withCredentials = true;
+
+    let body = JSON.stringify({ 'username': 'mrk2', 'password': 'Poland2017' });
+
+
   }
 
-  getProjects(): Promise<Project> {
-    let header = new Headers({ 'Content-Type': 'application/json' });
+  login() {
+    let headers = new Headers({ 'Content-Type': 'application/json' });
 
-    return this.http.get(this.jiraUrl + '/rest/api/2/project', { headers: header })
+    this.options.headers = headers;
+    this.options.withCredentials = true;
+
+    let body = JSON.stringify({ 'username': 'mrk2', 'password': 'Poland2017' });
+
+    /* this.http.post(this.jiraUrl + '/rest/auth/1/session', body, options)
+       .toPromise()
+       .then(response => { console.log('login resp ', response); })
+       // let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
+       .catch(this.handleError);*/
+
+    /*this.http.get('http://jiraps-test-upgrade:8080/plugins/servlet/kpi')
+    .toPromise()
+    .then(response => { 
+      let respHeaders = response.headers;
+      let setCookieHeader = respHeaders.get('Set-Cookie');*/
+
+    /*this.http.post(this.jiraUrl + '/rest/auth/1/session', this.options)
+  .toPromise()
+  .then(response => { console.log('login session ', response); })
+  // let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
+  .catch(this.handleError);
+    console.log('login setCookieHeader ', respHeaders);*/
+
+
+    //})
+    // let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
+
+
+    //  .catch(this.handleError);
+
+
+  }
+
+  // getSampleProjects() { return PROJECTS; }
+  //getSampleShowstoppers(name: string, priority: string, fixVersion:string, component: string) {
+  //  return QUERY;
+  //}
+
+  getProjects(): Promise<any> {
+
+    return this.http.get(this.jiraUrl + '/rest/api/2/project', this.options)
       .toPromise()
-      .then(response => response.json().data as Project[])
+      .then(response => response.json())
+      .catch(this.handleError);
+  }
+
+  getFixVersions(project: string): Promise<any>{
+     return this.http.get(this.jiraUrl + '/rest/api/2/project/' + project + '/versions', this.options)
+      .toPromise()
+      .then(response => response.json())
+      .catch(this.handleError);
+  }
+
+ getComponents(project: string): Promise<any>{
+     return this.http.get(this.jiraUrl + '/rest/api/2/project/' + project + '/components', this.options)
+      .toPromise()
+      .then(response => response.json())
+      .catch(this.handleError);
+  }
+
+  getIssues(jql: string): Promise<any> {
+
+    return this.http.get(this.jiraUrl + '/rest/api/2/search?jql=' + jql , this.options)
+      .toPromise()
+      .then(response => response.json())
       .catch(this.handleError);
   }
 
@@ -35,5 +105,6 @@ export class JiraService {
     console.error('An error occurred', error); // for demo purposes only
     return Promise.reject(error.message || error);
   }
+
 }
 

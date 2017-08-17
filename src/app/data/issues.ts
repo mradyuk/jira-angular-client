@@ -1,4 +1,6 @@
-{
+/*import { Query } from '../classes/kpi.issue.query';
+
+export const QUERY: Query = {
 	"expand": "schema,names",
 	"startAt": 0,
 	"maxResults": 50,
@@ -7886,4 +7888,4 @@
 			}
 		}
 	}]
-}
+}*/

@@ -1,4 +1,4 @@
-import { Project } from '../classes/kpi.project';
+/*import { Project } from '../classes/kpi.project';
  
 export const PROJECTS: Project[] =[
     {
@@ -8346,4 +8346,4 @@ export const PROJECTS: Project[] =[
         },
         "projectTypeKey": "software"
     }
-]
+]*/

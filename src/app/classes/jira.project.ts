@@ -7,5 +7,5 @@ export class Project {
   expand: string;  
   avatarUrls: Object;
   projectTypeKey: string;
-  projectCategory: Object;
+ // projectCategory: Object;
 }
