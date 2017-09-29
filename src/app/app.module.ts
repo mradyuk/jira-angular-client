@@ -2,33 +2,32 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { HttpModule } from '@angular/http';
-import { RouterModule, Routes } from '@angular/router';
+
+import { MaterialModule } from '@angular/material';
+import {BrowserAnimationsModule} from  '@angular/platform-browser/animations';
 
 import { KpiComponent } from './components/kpi.component';
-import { KpiFilterComponent } from './components/kpi.filter.component';
-import { KpiReportComponent } from './components/kpi.report.component';
-import { PageNotFoundComponent } from './components/page-not-found.component';
+//import { KpiFilterComponent } from './components/kpi.filter.component';
+//import { PageNotFoundComponent } from './components/page-not-found.component';
 
 import { JiraService } from './services/jira.service';
 
-const appRoutes: Routes = [
+import {enableProdMode} from '@angular/core';
 
-  { path: 'report/:project/:fixVersion/:component', component: KpiReportComponent }
- // { path: '**', component: PageNotFoundComponent },
+enableProdMode();
 
-];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(
-      appRoutes
-    ),
     BrowserModule,
     HttpModule,
-    FormsModule // <-- import the FormsModule before binding with [(ngModel)]
+    FormsModule,   
+    MaterialModule,
+    BrowserAnimationsModule
+ 
   ],
   declarations: [
-    KpiComponent, KpiFilterComponent, KpiReportComponent, PageNotFoundComponent
+    KpiComponent //, KpiFilterComponent, PageNotFoundComponent
   ],
   bootstrap: [KpiComponent],
   providers: [JiraService]

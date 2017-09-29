@@ -1,11 +1,474 @@
+<h2>
+</h2>
+<p></p>
 
-  <h2></h2>
-  <p></p>  
+<div class="container-fluid">
 
-<div class="container">
+  <div>
+    <h3>Project Quality</h3>
 
-<kpi-filter></kpi-filter>
+    <div>
+      <label>Project</label>
+
+      <select id="project" name="project" [(ngModel)]="project" (ngModelChange)="onProjectChange()">  
+           <option *ngFor="let prj of projects" [ngValue]="prj.key" [selected]='prj.key' >{{prj.name}}</option>           
+        </select>
+      <a *ngIf="wrapper" id="exportLink" style="display:none;" class='btn btn-primary'></a>
+      <input *ngIf="wrapper" type="button" value="Export to Excel" (click)="exportToExcel()">
+    </div>
+    <div>
+      <label>Fix version(s)</label>
+      <select id="fixVersion" name="fixVersion" [(ngModel)]="fixVersion" (ngModelChange)="onChange()">
+            <option [ngValue]="'All'" >All</option>      // quotes in quotes  quotes for TEXT VALUE     
+             <option *ngFor="let version of fixVersions" [ngValue]="version.id">{{version.name}}</option>
+        </select>
+      <label>Component(s)</label>
+      <select id="component" name="component" [(ngModel)]="component" (ngModelChange)="onChange()">
+            <option [ngValue]="'All'">All</option>  // quotes in quotes  quotes for TEXT VALUE        
+            <option *ngFor="let component of components" [ngValue]="component.id">{{component.name}}</option>
+        </select>
+    </div>
+    <div></div>
+
+    <div *ngIf="errorMsg">{{errorMsg}}</div>
+
+    <div *ngIf="wrapper" id="tableDIV">
+      <table id='reportTable' class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>KPI</th>
+            <th>Criteria</th>
+            <th>Actual value</th>
+            <th>Quality check</th>
+            <th>Additional Information</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="header-td">1</td>
+            <td class="header-td">Total # of Showstopper Issues</td>
+            <td class="header-td">not defined</td>
+            <td>{{wrapper.totalShowStopperQuery.total}}</td>
+            <td>N/A</td>
+            <td>
+              <p *ngIf="wrapper.totalShowstopperIssues.length > 0">
+                <a *ngFor="let issue of wrapper.totalShowstopperIssues" href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a>
+              </p>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="header-td">2</td>
+            <td class="header-td">Total # of Requirements (Stories)</td>
+            <td class="header-td">Stories resolved/done</td>
+            <td>{{wrapper.totalStoryQuery.total}}</td>
+            <td>
+              <p *ngIf="wrapper.totalStoryIssues.length > 0">Fail</p>
+              <p *ngIf="wrapper.totalStoryIssues.length == 0">Pass</p>
+            </td>
+            <td>
+              <p *ngIf="wrapper.totalStoryIssues.length > 0">
+                Stories in progress:
+                <a *ngFor="let issue of wrapper.totalStoryIssues" href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a>
+              </p>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="header-td">3</td>
+            <td class="header-td"># Defects in Progress - Showstoppers</td>
+            <td class="header-td">0</td>
+            <td>{{wrapper.showStopperQuery.total}}</td>
+            <td>
+              <p *ngIf="wrapper.showStopperIssues.length > 0"> Fail</p>
+              <p *ngIf="wrapper.showStopperIssues.length == 0"> Pass</p>
+            </td>
+            <td>
+              <p>
+                <a name='linkToIssue' *ngFor="let issue of wrapper.showStopperIssues" href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a>
+              </p>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="header-td">4</td>
+            <td class="header-td"># Defects in Progress - High Level</td>
+            <td class="header-td">0</td>
+            <td>{{wrapper.highLevelQuery.total}}</td>
+            <td>
+              <p *ngIf="wrapper.highLevelIssues.length > 0"> Fail</p>
+              <p *ngIf="wrapper.highLevelIssues.length == 0"> Pass</p>
+            </td>
+            <td>
+              <p>
+                <a name='linkToIssue' *ngFor="let issue of wrapper.highLevelIssues" href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a>
+                <p>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="header-td">5</td>
+            <td class="header-td"># Defects in Progress - Medium</td>
+            <td class="header-td">1</td>
+            <td>{{wrapper.mediumLevelQuery.total}}</td>
+            <td>
+              <p *ngIf="wrapper.mediumLevelIssues.length > 1"> Fail</p>
+              <p *ngIf="wrapper.mediumLevelIssues.length <= 1"> Pass</p>
+            </td>
+            <td>
+              <p>
+                <a name='linkToIssue' *ngFor="let issue of wrapper.mediumLevelIssues" href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a>
+                <p>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="header-td">6</td>
+            <td class="header-td"># Defects in Progress - Low Level</td>
+            <td class="header-td">2</td>
+            <td>{{wrapper.lowLevelQuery.total}}</td>
+            <td>
+              <p *ngIf="wrapper.lowLevelIssues.length > 2"> Fail</p>
+              <p *ngIf="wrapper.lowLevelIssues.length <= 2"> Pass</p>
+            </td>
+            <td>
+              <p>
+                <a name='linkToIssue' *ngFor="let issue of wrapper.lowLevelIssues" href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}};</a>
+                <p>
+            </td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td class="header-td">7</td>
+            <td class="header-td"># Defects reported in BIOVIA environment(s)</td>
+            <td class="header-td">not defined</td>
+            <td>{{wrapper.defectsInBioviaEnvQuery.total}}</td>
+            <td>N/A</td>
+            <td>
+              <p *ngIf="wrapper.defectsInBioviaEnvQuery.total > 0">{{wrapper.environmentsBiovia}} </p>
+              <p *ngIf="wrapper.defectsInBioviaEnvQuery.total == 0">N/A </p>
+            </td>
+            <td>
+              <p *ngIf="wrapper.defectsInBioviaEnvQuery.total == 0">Reporting Error: field "Environment" starting with "BIOVIA" is not assigned to Defects</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="header-td">8</td>
+            <td class="header-td"># Defects reported in Customer environment(s)</td>
+            <td class="header-td">not defined</td>
+            <td>{{wrapper.defectsInCustomerEnvQuery.total}}</td>
+            <td>N/A</td>
+            <td>
+              <p *ngIf="wrapper.defectsInCustomerEnvQuery.total > 0">{{wrapper.environmentsCustomer}} </p>
+              <p *ngIf="wrapper.defectsInCustomerEnvQuery.total == 0">N/A </p>
+            </td>
+            <td>
+              <p *ngIf="wrapper.defectsInCustomerEnvQuery.total == 0">Reporting Error: field "Environment" starting with "CUSTOMER" is not assigned to Defects</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="header-td">9</td>
+            <td class="header-td">Average of Test Cases per Story</td>
+            <td class="header-td">>=1</td>
+            <td>{{wrapper.testCasesAVG}}</td>
+            <td>
+              <p *ngIf="wrapper.testCasesAVG < 1 || wrapper.notPassedTC.length != 0"> Fail</p>
+              <p *ngIf="wrapper.testCasesAVG >= 1 && wrapper.notPassedTC.length == 0"> Pass</p>
+            </td>
+            <td>
+              <p *ngIf="wrapper.storieswithoutTC.length != 0">TC links not available:
+                <a name='linkToIssue' *ngFor="let story of wrapper.storieswithoutTC" href='{{jiraURL}}/browse/{{story}}' target='_blank'> {{story}};</a>
+              </p>
+              <p *ngIf="wrapper.notPassedTC.length != 0">TC not passed:
+                <a name='linkToIssue' *ngFor="let tc of wrapper.notPassedTC" href='{{jiraURL}}/browse/{{tc}}' target='_blank'> {{tc}};</a>
+              </p>
+            </td>
+            <td></td>
+          </tr>
+
+
+          <tr>
+            <td class="header-td">10</td>
+            <td class="header-td">Deviation effective delivery date vs planned date (in days)</td>
+            <td class="header-td">not defined</td>
+            <td></td>
+            <td></td>
+            <td> N/A</td>
+            <td></td>
+          </tr>
+
+
+          <tr>
+            <td class="header-td">11</td>
+            <td class="header-td">Jira is used</td>
+            <td class="header-td">Pass</td>
+            <td><a href='{{jiraURL}}/projects/{{project}}' target='_blank'>{{jiraURL}}/projects/{{project}}</a></td>
+            <td>
+              <p *ngIf='!jiraIsUsed'> Fail</p>
+              <p *ngIf='jiraIsUsed'> Pass</p>
+            </td>
+            <td>N/A</td>
+            <td></td>
+          </tr>
+
+
+          <tr>
+            <td class="header-td">12</td>
+            <td class="header-td">Project Fileshare in Confluence or Sharepoint available</td>
+            <td class="header-td">Pass</td>
+            <td></td>
+            <td></td>
+            <td>N/A</td>
+            <td></td>
+          </tr>
+
+        </tbody>
+      </table>
+
+
+    </div>
+    <br/>
+
+    <p><b>Note to the user:</b></p>
+    <p> Criteria needs to be "Pass" to enter the gate for customer deployment. The following shows some options can be taken
+      to meet the criteria: </p>
+    <p> 1. Resolve / Clean-up Issues and re-run KPI report </p>
+    <p> 2. Assign issue that belongs to the failed KPI (e.g. story belongs to defect and defect itself) to a future version delivery
+      (this requires usage of the field "Fix Version/s" or "Component/s")</p>
+    <p> 3. review / update Priority of issues and re-run report</p>
+  </div>
+
+
+  <!--HIDDEN TABLE FOR EXCEL REPORT ONLY - ONE LINK PER CELL -->
+  <div *ngIf="wrapper" id="hiddenTableDIV" hidden>
+    <table id='hiddenReportTable' class="table table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>KPI</th>
+          <th>Criteria</th>
+          <th>Actual value</th>
+          <th>Quality check</th>
+          <th>Additional Information</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="header-td">1</td>
+          <td class="header-td">Total # of Showstopper Issues</td>
+          <td class="header-td">not defined</td>
+          <td>{{wrapper.totalShowStopperQuery.total}}</td>
+          <td>N/A</td>
+          <td>
+            <table *ngIf="wrapper.totalShowstopperIssues.length > 0">
+              <tr *ngFor="let issue of wrapper.totalShowstopperIssues">
+                <td> <a href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header-td">2</td>
+          <td class="header-td">Total # of Requirements (Stories)</td>
+          <td class="header-td">Stories resolved/done</td>
+          <td>{{wrapper.totalStoryQuery.total}}</td>
+          <td>
+            <p *ngIf="wrapper.totalStoryIssues.length > 0">Fail</p>
+            <p *ngIf="wrapper.totalStoryIssues.length == 0">Pass</p>
+          </td>
+          <td>
+            <table *ngIf="wrapper.totalStoryIssues.length > 0">
+              <tr> Stories in progress: </tr>
+              <tr *ngFor="let issue of wrapper.totalStoryIssues">
+                <td> <a href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header-td">3</td>
+          <td class="header-td"># Defects in Progress - Showstoppers</td>
+          <td class="header-td">
+            <!--input style="border:none;background-color: #fff;" value='0' disabled readonly-->0</td>
+          <td>{{wrapper.showStopperQuery.total}}</td>
+          <td>
+            <p *ngIf="wrapper.showStopperIssues.length > 0"> Fail</p>
+            <p *ngIf="wrapper.showStopperIssues.length == 0"> Pass</p>
+          </td>
+          <td>
+            <table *ngIf="wrapper.showStopperIssues.length > 0">
+              <tr *ngFor="let issue of wrapper.showStopperIssues">
+                <td> <a href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header-td">4</td>
+          <td class="header-td"># Defects in Progress - High Level</td>
+          <td class="header-td">0</td>
+          <td>{{wrapper.highLevelQuery.total}}</td>
+          <td>
+            <p *ngIf="wrapper.highLevelIssues.length > 0"> Fail</p>
+            <p *ngIf="wrapper.highLevelIssues.length == 0"> Pass</p>
+          </td>
+          <td>
+            <table *ngIf="wrapper.highLevelIssues.length > 0">
+              <tr *ngFor="let issue of wrapper.highLevelIssues">
+                <td> <a href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header-td">5</td>
+          <td class="header-td"># Defects in Progress - Medium</td>
+          <td class="header-td">1</td>
+          <td>{{wrapper.mediumLevelQuery.total}}</td>
+          <td>
+            <p *ngIf="wrapper.mediumLevelIssues.length > 1"> Fail</p>
+            <p *ngIf="wrapper.mediumLevelIssues.length <= 1"> Pass</p>
+          </td>
+          <td>
+            <table *ngIf="wrapper.mediumLevelIssues.length > 0">
+              <tr *ngFor="let issue of wrapper.mediumLevelIssues">
+                <td> <a href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header-td">6</td>
+          <td class="header-td"># Defects in Progress - Low Level</td>
+          <td class="header-td">2</td>
+          <td>{{wrapper.lowLevelQuery.total}}</td>
+          <td>
+            <p *ngIf="wrapper.lowLevelIssues.length > 2"> Fail</p>
+            <p *ngIf="wrapper.lowLevelIssues.length <= 2"> Pass</p>
+          </td>
+          <td>
+            <table *ngIf="wrapper.lowLevelIssues.length > 0">
+              <tr *ngFor="let issue of wrapper.lowLevelIssues">
+                <td> <a href='{{jiraURL}}/browse/{{issue.key}}' target='_blank'> {{issue.key}}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="header-td">7</td>
+          <td class="header-td"># Defects reported in BIOVIA environment(s)</td>
+          <td class="header-td">not defined</td>
+          <td>{{wrapper.defectsInBioviaEnvQuery.total}}</td>
+          <td>N/A</td>
+          <td>
+            <p *ngIf="wrapper.defectsInBioviaEnvQuery.total > 0">{{wrapper.environmentsBiovia}} </p>
+            <p *ngIf="wrapper.defectsInBioviaEnvQuery.total == 0">N/A </p>
+          </td>
+          <td>
+            <p *ngIf="wrapper.defectsInBioviaEnvQuery.total == 0">Reporting Error: field "Environment" starting with "BIOVIA" is not assigned to Defects</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="header-td">8</td>
+          <td class="header-td"># Defects reported in Customer environment(s)</td>
+          <td class="header-td">not defined</td>
+          <td>{{wrapper.defectsInCustomerEnvQuery.total}}</td>
+          <td>N/A</td>
+          <td>
+            <p *ngIf="wrapper.defectsInCustomerEnvQuery.total > 0">{{wrapper.environmentsCustomer}} </p>
+            <p *ngIf="wrapper.defectsInCustomerEnvQuery.total == 0">N/A </p>
+          </td>
+          <td>
+            <p *ngIf="wrapper.defectsInCustomerEnvQuery.total == 0">Reporting Error: field "Environment" starting with "CUSTOMER" is not assigned to Defects</p>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="header-td">9</td>
+          <td class="header-td">Average of Test Cases per Story</td>
+          <td class="header-td">>=1</td>
+          <td>{{wrapper.testCasesAVG}}</td>
+          <td>
+            <p *ngIf="wrapper.testCasesAVG < 1 || wrapper.notPassedTC.length != 0"> Fail</p>
+            <p *ngIf="wrapper.testCasesAVG >= 1 && wrapper.notPassedTC.length == 0"> Pass</p>
+          </td>
+          <td>
+            <table *ngIf="wrapper.storieswithoutTC.length != 0">
+              <tr>TC links not available:</tr>
+              <tr *ngFor="let story of wrapper.storieswithoutTC">
+                <td> <a href='{{jiraURL}}/browse/{{story}}' target='_blank'> {{story}}</a>
+                </td>
+              </tr>
+            </table>
+
+            <table *ngIf="wrapper.notPassedTC.length != 0">
+              <tr> TC not passed: </tr>
+              <tr *ngFor="let tc of wrapper.notPassedTC">
+                <td> <a href='{{jiraURL}}/browse/{{tc}}' target='_blank'> {{tc}}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+
+
+        <tr>
+          <td class="header-td">10</td>
+          <td class="header-td">Deviation effective delivery date vs planned date (in days)</td>
+          <td class="header-td">not defined</td>
+          <td></td>
+          <td></td>
+          <td> N/A</td>
+          <td></td>
+        </tr>
+
+
+        <tr>
+          <td class="header-td">11</td>
+          <td class="header-td">Jira is used</td>
+          <td class="header-td">Pass</td>
+          <td><a href='{{jiraURL}}/projects/{{project}}' target='_blank'>{{jiraURL}}/projects/{{project}}</a></td>
+          <td>
+            <p *ngIf='!jiraIsUsed'> Fail</p>
+            <p *ngIf='jiraIsUsed'> Pass</p>
+          </td>
+          <td>N/A</td>
+          <td></td>
+        </tr>
+
+
+        <tr>
+          <td class="header-td">12</td>
+          <td class="header-td">Project Fileshare in Confluence or Sharepoint available</td>
+          <td class="header-td">Pass</td>
+          <td></td>
+          <td></td>
+          <td>N/A</td>
+          <td></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
 
 
 </div>
-

@@ -23,18 +23,17 @@ export class JiraService {
     this.options.headers = headers;
     this.options.withCredentials = true;
 
-    let body = JSON.stringify({ 'username': 'mrk2', 'password': 'Poland2017' });
-
-
+    // let body = JSON.stringify({ 'username': 'mrk2', 'password': 'Poland2017' });
+    //this.login();
   }
 
-  login() {
+  private login() {
     let headers = new Headers({ 'Content-Type': 'application/json' });
 
     this.options.headers = headers;
     this.options.withCredentials = true;
 
-    let body = JSON.stringify({ 'username': 'mrk2', 'password': 'Poland2017' });
+    // let body = JSON.stringify({ 'username': 'mrk2', 'password': 'Poland2017' });
 
     /* this.http.post(this.jiraUrl + '/rest/auth/1/session', body, options)
        .toPromise()
@@ -42,28 +41,38 @@ export class JiraService {
        // let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
        .catch(this.handleError);*/
 
-    /*this.http.get('http://jiraps-test-upgrade:8080/plugins/servlet/kpi')
-    .toPromise()
-    .then(response => { 
-      let respHeaders = response.headers;
-      let setCookieHeader = respHeaders.get('Set-Cookie');*/
-
-    /*this.http.post(this.jiraUrl + '/rest/auth/1/session', this.options)
-  .toPromise()
-  .then(response => { console.log('login session ', response); })
-  // let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
-  .catch(this.handleError);
-    console.log('login setCookieHeader ', respHeaders);*/
-
-
-    //})
-    // let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
-
-
-    //  .catch(this.handleError);
-
-
+    this.http.get(this.jiraUrl + '/plugins/servlet/kpi')
+      .toPromise()
+      .then(response => {
+        console.log('resp', response);
+        let respHeaders = response.headers;
+        let setCookieHeader = respHeaders.get('Set-Cookie');
+      });
   }
+
+  getConnectionDetails(): Promise<any> {
+    return this.http.get(this.jiraUrl + '/plugins/servlet/kpi')
+      .toPromise()
+      .then(response => response.text())
+      .catch(this.handleError);
+  }
+
+  /*this.http.post(this.jiraUrl + '/rest/auth/1/session', this.options)
+.toPromise()
+.then(response => { console.log('login session ', response); })
+// let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
+.catch(this.handleError);
+  console.log('login setCookieHeader ', respHeaders);*/
+
+
+  //})
+  // let user = response.json();localStorage.setItem('currentUser', JSON.stringify(user));
+
+
+  //  .catch(this.handleError);
+
+
+
 
   // getSampleProjects() { return PROJECTS; }
   //getSampleShowstoppers(name: string, priority: string, fixVersion:string, component: string) {
@@ -78,15 +87,17 @@ export class JiraService {
       .catch(this.handleError);
   }
 
-  getFixVersions(project: string): Promise<any>{
-     return this.http.get(this.jiraUrl + '/rest/api/2/project/' + project + '/versions', this.options)
+  getFixVersions(project: string): Promise<any> {
+
+    return this.http.get(this.jiraUrl + '/rest/api/2/project/' + project + '/versions', this.options)
       .toPromise()
       .then(response => response.json())
       .catch(this.handleError);
   }
 
- getComponents(project: string): Promise<any>{
-     return this.http.get(this.jiraUrl + '/rest/api/2/project/' + project + '/components', this.options)
+  getComponents(project: string): Promise<any> {
+
+    return this.http.get(this.jiraUrl + '/rest/api/2/project/' + project + '/components', this.options)
       .toPromise()
       .then(response => response.json())
       .catch(this.handleError);
@@ -94,7 +105,9 @@ export class JiraService {
 
   getIssues(jql: string): Promise<any> {
 
-    return this.http.get(this.jiraUrl + '/rest/api/2/search?jql=' + jql , this.options)
+    console.log(this.jiraUrl + '/rest/api/2/search?jql=' + jql);
+
+    return this.http.get(this.jiraUrl + '/rest/api/2/search?jql=' + jql, this.options)
       .toPromise()
       .then(response => response.json())
       .catch(this.handleError);
@@ -102,8 +115,8 @@ export class JiraService {
 
 
   private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error); // for demo purposes only
-    return Promise.reject(error.message || error);
+    //console.error('An error occurred', error); // for demo purposes only   
+    return Promise.reject(error);
   }
 
 }
